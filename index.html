@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Junliegh B. Permison | Computer Engineer</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        primary: '#0ea5e9', // Cyber Cyan
+                        secondary: '#10b981', // Terminal Green
+                        accent: '#8b5cf6', // Tech Purple
+                        dark: '#020617', // Deep black/blue
+                        surface: '#0f172a', // Component background
+                        surface2: '#1e293b' // Lighter component background
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #020617 0%, #09132b 50%, #020617 100%);
+            background-attachment: fixed;
+            color: #cbd5e1;
+            overflow-x: hidden;
+        }
+
+        /* Tech/Circuit Grid Background */
+        .tech-grid {
+            background-image: 
+                linear-gradient(to right, rgba(14, 165, 233, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(14, 165, 233, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center center;
+        }
+
+        /* Dynamic Mouse Spotlight */
+        #spotlight {
+            background: radial-gradient(600px circle at 0px 0px, rgba(14, 165, 233, 0.06), transparent 40%);
+        }
+
+        /* Glowing effects for the hardware feel */
+        .glow-text {
+            text-shadow: 0 0 15px rgba(14, 165, 233, 0.4);
+        }
+        .glow-border {
+            box-shadow: 0 0 15px rgba(14, 165, 233, 0.05);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .glow-border:hover {
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.2);
+            border-color: rgba(14, 165, 233, 0.5);
+            transform: translateY(-5px);
+        }
+
+        /* Terminal Cursor Animation */
+        .cursor-blink {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Scroll Reveal Animations (Controlled by JS Intersection Observer) */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Staggered delays for reveals */
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+
+        /* Active Nav Link */
+        .nav-link.active {
+            color: #0ea5e9;
+            text-shadow: 0 0 8px rgba(14, 165, 233, 0.5);
+        }
+        .nav-link.active::after {
+            content: '_';
+            position: absolute;
+            color: #0ea5e9;
+            animation: blink 1s step-end infinite;
+        }
+        
+        /* Circuit Timeline Line */
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 15px;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, rgba(14, 165, 233, 0.4), transparent);
+            z-index: 0;
+        }
+        @media (min-width: 768px) {
+            .timeline-line::before {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-primary selection:text-dark relative">
+
+    <!-- Global Backgrounds -->
+    <div class="tech-grid fixed inset-0 z-[-2] pointer-events-none"></div>
+    <div id="spotlight" class="fixed inset-0 z-[-1] pointer-events-none opacity-0 transition-opacity duration-500"></div>
+
+    <!-- Scroll Progress Bar -->
+    <div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-primary via-accent to-secondary z-[60] w-0 transition-all duration-150 ease-out"></div>
+
+    <nav class="fixed w-full z-50 bg-dark/70 backdrop-blur-lg border-b border-surface2 transition-all duration-300" id="navbar">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <!-- Logo / Name -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="#home" class="font-mono font-bold text-xl tracking-tight text-slate-200 hover:text-primary transition-colors">
+                        J.Permison<span class="text-primary cursor-blink">_</span>
+                    </a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 font-sans font-medium">
+                    <a href="#home" class="nav-link text-slate-400 hover:text-primary transition-all px-3 py-2 text-sm relative">Home</a>
+                    <a href="#about" class="nav-link text-slate-400 hover:text-primary transition-all px-3 py-2 text-sm relative">About</a>
+                    <a href="#experience" class="nav-link text-slate-400 hover:text-primary transition-all px-3 py-2 text-sm relative">Experience</a>
+                    <a href="#skills" class="nav-link text-slate-400 hover:text-primary transition-all px-3 py-2 text-sm relative">Skills</a>
+                    <a href="#education" class="nav-link text-slate-400 hover:text-primary transition-all px-3 py-2 text-sm relative">Education</a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="text-primary hover:text-white focus:outline-none p-2">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-surface/95 backdrop-blur-lg border-b border-surface2 absolute w-full shadow-2xl font-sans font-medium">
+            <div class="px-4 pt-2 pb-4 space-y-1">
+                <a href="#home" class="block px-3 py-2 text-base text-slate-400 hover:text-primary hover:bg-surface2/50 rounded transition-colors">Home</a>
+                <a href="#about" class="block px-3 py-2 text-base text-slate-400 hover:text-primary hover:bg-surface2/50 rounded transition-colors">About</a>
+                <a href="#experience" class="block px-3 py-2 text-base text-slate-400 hover:text-primary hover:bg-surface2/50 rounded transition-colors">Experience</a>
+                <a href="#skills" class="block px-3 py-2 text-base text-slate-400 hover:text-primary hover:bg-surface2/50 rounded transition-colors">Skills</a>
+                <a href="#education" class="block px-3 py-2 text-base text-slate-400 hover:text-primary hover:bg-surface2/50 rounded transition-colors">Education</a>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="pt-32 pb-20 md:pt-40 md:pb-28 min-h-screen flex items-center relative">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <!-- Text Content -->
+                <div class="md:w-3/5 text-left reveal">
+                    <div class="font-sans font-medium text-secondary mb-4 flex items-center text-sm md:text-base tracking-wide uppercase h-6">
+                        <span class="text-primary mr-2">>&nbsp;</span><span id="typing-text"></span><span class="cursor-blink ml-1 w-2 h-4 bg-secondary inline-block align-middle"></span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl lg:text-7xl font-bold text-white leading-tight mb-4 tracking-tight glow-text reveal delay-100">
+                        Junliegh B.<br>Permison
+                    </h1>
+                    <h2 class="text-xl md:text-2xl text-primary font-mono mb-2 flex items-center reveal delay-200">
+                        <i class="fas fa-microchip mr-3"></i> Computer Engineer
+                    </h2>
+                    <div class="mb-6 reveal delay-200">
+                        <button class="flex items-center text-sm text-secondary hover:text-white transition-colors cert-link cursor-pointer font-mono bg-secondary/10 px-3 py-1.5 rounded border border-secondary/30 hover:bg-secondary/20 hover:shadow-[0_0_10px_rgba(16,185,129,0.3)]" data-src="Diploma.png" data-title="Bachelor of Science in Computer Engineering - Diploma">
+                            <i class="fas fa-award mr-2"></i> View Diploma
+                        </button>
+                    </div>
+                    <p class="text-slate-400 text-lg mb-8 max-w-2xl leading-relaxed border-l-2 border-surface2 pl-4 text-justify reveal delay-300">
+                        Dynamic professional committed to driving innovation and operational excellence. Leveraging practical experience in programming, machine learning, and equipment engineering to solve complex technical challenges.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 font-sans text-sm font-medium reveal delay-300">
+                        <a href="#contact" class="px-6 py-3 bg-primary/10 text-primary border border-primary hover:bg-primary hover:text-dark transition-all duration-300 rounded flex items-center justify-center group hover:shadow-[0_0_15px_rgba(14,165,233,0.4)]">
+                            <i class="fas fa-paper-plane mr-2 group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform"></i> Get in Touch
+                        </a>
+                        <a href="#experience" class="px-6 py-3 bg-surface text-slate-300 border border-surface2 hover:border-slate-400 hover:text-white transition-all duration-300 rounded flex items-center justify-center">
+                            View Experience
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Profile Image / Tech Frame -->
+                <div class="md:w-2/5 flex justify-center reveal delay-200">
+                    <div class="relative w-64 h-64 md:w-80 md:h-80 group">
+                        <!-- Tech Brackets -->
+                        <div class="absolute -inset-3 border-2 border-primary/30 opacity-30 group-hover:opacity-100 transition-opacity duration-500 rounded-lg">
+                            <div class="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-primary -mt-0.5 -ml-0.5 rounded-tl-lg"></div>
+                            <div class="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-primary -mt-0.5 -mr-0.5 rounded-tr-lg"></div>
+                            <div class="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-primary -mb-0.5 -ml-0.5 rounded-bl-lg"></div>
+                            <div class="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-primary -mb-0.5 -mr-0.5 rounded-br-lg"></div>
+                        </div>
+                        
+                        <!-- Image Container -->
+                        <div class="w-full h-full bg-surface2 overflow-hidden border border-surface2 relative z-10 filter grayscale group-hover:grayscale-0 transition-all duration-700 glow-border rounded-lg">
+                            <div class="absolute inset-0 bg-primary/20 mix-blend-overlay group-hover:bg-transparent transition-colors duration-700 z-20 pointer-events-none"></div>
+                            <!-- Using a standard tech avatar placeholder since real image isn't available -->
+                            <img src="Jun.jpg" alt="Junliegh B. Permison" class="w-full h-500 object-cover transform group-hover:scale-105 transition-transform duration-700">
+                            
+                            <!-- Scanner line effect on hover -->
+                            <div class="absolute top-0 left-0 w-full h-1 bg-primary/50 opacity-0 group-hover:opacity-100 transition-opacity z-30 shadow-[0_0_15px_#0ea5e9] animate-[scan_2.5s_ease-in-out_infinite]"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="py-20 relative border-t border-surface2/50 bg-dark/30 backdrop-blur-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="mb-12 reveal">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mt-2 mb-2">Professional <span class="text-primary">Overview</span></h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary to-transparent"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Text block -->
+                <div class="lg:col-span-2 space-y-4 text-slate-400 text-lg leading-relaxed font-sans bg-surface p-8 glow-border rounded-xl text-justify reveal delay-100">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center"><i class="fas fa-terminal text-primary mr-3 text-sm"></i> Profile Summary</h3>
+                    <p>
+                        I am a proven leader in both academic and corporate environments, recognized for clear communication, adaptable problem-solving, and a track record of coaching high-performing teams to competitive success.
+                    </p>
+                    <p>
+                        My background spans from instructing the next generation of engineers to spearheading enterprise-level software development and managing critical equipment engineering tasks in a manufacturing environment. 
+                    </p>
+                    <p>
+                        I thrive in roles that require a blend of technical acumen, strategic planning, and cross-functional leadership.
+                    </p>
+                </div>
+                
+                <!-- Contact info -->
+                <div class="bg-surface p-8 rounded-xl glow-border font-sans reveal delay-200">
+                    <h3 class="text-xl font-bold text-white mb-6 flex items-center"><i class="fas fa-address-card text-primary mr-3 text-sm"></i> Contact Details</h3>
+                    <ul class="space-y-5 text-slate-300">
+                        <li class="flex items-start group">
+                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 group-hover:bg-primary/20 transition-colors shrink-0">
+                                <i class="fas fa-map-marker-alt text-primary"></i>
+                            </div>
+                            <span class="pt-2 text-sm leading-snug">Anonas East, Urdaneta City, Pangasinan</span>
+                        </li>
+                        <li class="flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 group-hover:bg-primary/20 transition-colors shrink-0">
+                                <i class="fas fa-envelope text-primary"></i>
+                            </div>
+                            <a href="mailto:permisonjunliegh12@gmail.com" class="hover:text-primary transition-colors text-sm break-all pt-1">permisonjunliegh12@gmail.com</a>
+                        </li>
+                        <li class="flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 group-hover:bg-primary/20 transition-colors shrink-0">
+                                <i class="fas fa-phone text-primary"></i>
+                            </div>
+                            <a href="tel:+639912785470" class="hover:text-primary transition-colors text-sm pt-1">+63 991 278 5470</a>
+                        </li>
+                        <li class="flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 group-hover:bg-primary/20 transition-colors shrink-0">
+                                <i class="fas fa-calendar-alt text-primary"></i>
+                            </div>
+                            <span class="text-sm pt-1">Born: December 12, 1999</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience" class="py-20 relative">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="mb-16 reveal text-center md:text-left">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">Professional <span class="text-primary">Experience</span></h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary to-transparent mx-auto md:mx-0"></div>
+            </div>
+
+            <div class="relative timeline-line space-y-16">
+                
+                <!-- Experience Item 1 -->
+                <div class="relative z-10 flex flex-col md:flex-row reveal group">
+                    <div class="md:w-1/2 md:pr-16 md:text-right mb-4 md:mb-0">
+                        <h3 class="text-2xl font-bold text-white font-sans group-hover:text-primary transition-colors">IT Project Manager</h3>
+                        <div class="text-slate-400 text-sm mb-3"><i class="fas fa-building mr-2 text-surface2"></i>Vertex Technologies Corporation</div>
+                        <div class="font-sans text-xs font-bold tracking-wider uppercase text-primary border border-primary/30 bg-primary/10 inline-block px-3 py-1.5 rounded-full shadow-[0_0_10px_rgba(14,165,233,0.1)]">Feb 2026 - Present</div>
+                    </div>
+                    <!-- Circuit Node -->
+                    <div class="absolute left-0 md:left-1/2 w-5 h-5 bg-dark border-[3px] border-primary rounded-full transform -translate-x-1/2 mt-1 md:mt-1 flex items-center justify-center group-hover:bg-primary group-hover:shadow-[0_0_15px_#0ea5e9] group-hover:scale-125 transition-all duration-300 z-20"></div>
+                    
+                    <div class="md:w-1/2 md:pl-16 pl-12">
+                        <div class="bg-surface p-7 rounded-xl glow-border relative text-slate-300 shadow-lg">
+                            <!-- Circuit Connector Line (Desktop) -->
+                            <div class="hidden md:block absolute left-0 top-4 -translate-x-full w-16 h-[2px] bg-gradient-to-r from-transparent to-primary/50 group-hover:to-primary transition-colors"></div>
+                            
+                            <ul class="list-none space-y-4 text-sm font-sans text-justify">
+                                <li class="flex items-start">
+                                    <i class="fas fa-chevron-right text-primary text-[10px] mt-1.5 mr-3"></i> 
+                                    <div>
+                                        <span class="font-semibold text-slate-200">Spearhead development, documentation, and deployment of key enterprise and government systems:</span>
+                                        <ul class="mt-2 space-y-1.5 ml-1 border-l-2 border-primary/30 pl-4 text-slate-400">
+                                            <li class="hover:text-primary transition-colors"><span class="text-primary mr-2 opacity-70">■</span> Digital Data Gathering Form (EMapandan)</li>
+                                            <li class="hover:text-primary transition-colors"><span class="text-primary mr-2 opacity-70">■</span> Building Permit Issuance for LGU Mapandan</li>
+                                            <li class="hover:text-primary transition-colors"><span class="text-primary mr-2 opacity-70">■</span> Industrial Distributor System</li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-chevron-right text-primary text-[10px] mt-1.5 mr-3"></i> 
+                                    <span>Establish and implement standardized operating procedures (SOPs) and project management frameworks.</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-chevron-right text-primary text-[10px] mt-1.5 mr-3"></i> 
+                                    <span>Lead UI/UX design and architecture for specialized industrial dashboards and inventory control modules.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Experience Item 2 -->
+                <div class="relative z-10 flex flex-col md:flex-row-reverse reveal delay-100 group">
+                    <div class="md:w-1/2 md:pl-16 mb-4 md:mb-0 pl-12">
+                        <h3 class="text-2xl font-bold text-white font-sans group-hover:text-secondary transition-colors">CPE Instructor</h3>
+                        <div class="text-slate-400 text-sm mb-3"><i class="fas fa-university mr-2 text-surface2"></i>PHINMA UPANG Dagupan</div>
+                        <div class="font-sans text-xs font-bold tracking-wider uppercase text-secondary border border-secondary/30 bg-secondary/10 inline-block px-3 py-1.5 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.1)]">Jul 2024 – Nov 2025</div>
+                    </div>
+                    <!-- Circuit Node -->
+                    <div class="absolute left-0 md:left-1/2 w-5 h-5 bg-dark border-[3px] border-secondary rounded-full transform -translate-x-1/2 mt-1 md:mt-1 flex items-center justify-center group-hover:bg-secondary group-hover:shadow-[0_0_15px_#10b981] group-hover:scale-125 transition-all duration-300 z-20"></div>
+
+                    <div class="md:w-1/2 md:pr-16 pl-12 md:pl-0 md:text-right">
+                        <div class="bg-surface p-7 rounded-xl glow-border !border-secondary/30 hover:!border-secondary/60 relative text-slate-300 text-left shadow-lg">
+                             <!-- Circuit Connector Line (Desktop) -->
+                             <div class="hidden md:block absolute right-0 top-4 translate-x-full w-16 h-[2px] bg-gradient-to-l from-transparent to-secondary/50 group-hover:to-secondary transition-colors"></div>
+                            
+                            <ul class="list-none space-y-4 text-sm font-sans text-justify">
+                                <li class="flex items-start md:flex-row-reverse md:text-right">
+                                    <i class="fas fa-chevron-left text-secondary text-[10px] mt-1.5 mr-3 md:mr-0 md:ml-3 hidden md:block"></i>
+                                    <i class="fas fa-chevron-right text-secondary text-[10px] mt-1.5 mr-3 md:hidden"></i>
+                                    <span>Instructed engineering students in advanced programming concepts, system networking, and engineering principles.</span>
+                                </li>
+                                <li class="flex items-start md:flex-row-reverse md:text-right">
+                                    <i class="fas fa-chevron-left text-secondary text-[10px] mt-1.5 mr-3 md:mr-0 md:ml-3 hidden md:block"></i>
+                                    <i class="fas fa-chevron-right text-secondary text-[10px] mt-1.5 mr-3 md:hidden"></i>
+                                    <div class="w-full">
+                                        <span>Directed and coached the university team to win <strong class="text-white">1st Place</strong> in the Python Programming Competition at the ICpEP 7th Regional Convention.</span>
+                                        <div class="mt-3 md:flex md:justify-end">
+                                            <button class="flex items-center text-xs text-secondary hover:text-white transition-colors cert-link cursor-pointer bg-secondary/10 px-3 py-1.5 rounded border border-secondary/30 hover:bg-secondary/20 hover:shadow-[0_0_10px_rgba(16,185,129,0.2)]" data-src="PERMISON.png" data-title="1st Place - Python Programming Competition">
+                                                <i class="fas fa-award mr-2"></i> View Certificate
+                                            </button>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Experience Item 3 -->
+                <div class="relative z-10 flex flex-col md:flex-row reveal delay-200 group">
+                    <div class="md:w-1/2 md:pr-16 md:text-right mb-4 md:mb-0 pl-12 md:pl-0">
+                        <h3 class="text-2xl font-bold text-white font-sans group-hover:text-accent transition-colors">Production Engineer</h3>
+                        <div class="text-slate-400 text-sm mb-3"><i class="fas fa-industry mr-2 text-surface2"></i>Sumi-North Philippines Wiring System</div>
+                        <div class="font-sans text-xs font-bold tracking-wider uppercase text-accent border border-accent/30 bg-accent/10 inline-block px-3 py-1.5 rounded-full shadow-[0_0_10px_rgba(139,92,246,0.1)]">Oct 2023 - Mar 2024</div>
+                    </div>
+                    <!-- Circuit Node -->
+                    <div class="absolute left-0 md:left-1/2 w-5 h-5 bg-dark border-[3px] border-accent rounded-full transform -translate-x-1/2 mt-1 md:mt-1 flex items-center justify-center group-hover:bg-accent group-hover:shadow-[0_0_15px_#8b5cf6] group-hover:scale-125 transition-all duration-300 z-20"></div>
+
+                    <div class="md:w-1/2 md:pl-16 pl-12">
+                        <div class="bg-surface p-7 rounded-xl glow-border !border-accent/30 hover:!border-accent/60 relative text-slate-300 shadow-lg">
+                             <!-- Circuit Connector Line (Desktop) -->
+                             <div class="hidden md:block absolute left-0 top-4 -translate-x-full w-16 h-[2px] bg-gradient-to-r from-transparent to-accent/50 group-hover:to-accent transition-colors"></div>
+                            
+                            <ul class="list-none space-y-4 text-sm font-sans text-justify">
+                                <li class="flex items-start">
+                                    <i class="fas fa-chevron-right text-accent text-[10px] mt-1.5 mr-3"></i> 
+                                    <span>Managed equipment engineering and maintenance tasks within the molding department.</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-chevron-right text-accent text-[10px] mt-1.5 mr-3"></i> 
+                                    <span>Optimized quality control processes and implemented solutions to increase overall production efficiency.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="py-20 bg-dark/30 border-y border-surface2/50 backdrop-blur-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-14 reveal text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">Skills & <span class="text-primary">Expertise</span></h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 font-sans text-sm">
+                
+                <!-- Category 1 -->
+                <div class="bg-surface p-6 rounded-xl glow-border reveal delay-100 hover:shadow-[0_10px_30px_rgba(14,165,233,0.15)] transition-all duration-300">
+                    <div class="text-primary mb-5 border-b border-surface2 pb-3 flex items-center justify-between">
+                        <span class="font-bold text-lg tracking-wide">Systems & Prog</span>
+                        <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <i class="fas fa-microchip text-primary"></i>
+                        </div>
+                    </div>
+                    <ul class="space-y-3">
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-check text-secondary mr-3 text-xs group-hover:scale-125 transition-transform"></i>Python</li>
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-check text-secondary mr-3 text-xs group-hover:scale-125 transition-transform"></i>Machine Learning</li>
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-check text-secondary mr-3 text-xs group-hover:scale-125 transition-transform"></i>Linux (OS)</li>
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-check text-secondary mr-3 text-xs group-hover:scale-125 transition-transform"></i>Windows (OS)</li>
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-check text-secondary mr-3 text-xs group-hover:scale-125 transition-transform"></i>Network Admin</li>
+                    </ul>
+                </div>
+
+                <!-- Category 2 -->
+                <div class="bg-surface p-6 rounded-xl glow-border reveal delay-200 hover:shadow-[0_10px_30px_rgba(139,92,246,0.15)] transition-all duration-300">
+                    <div class="text-accent mb-5 border-b border-surface2 pb-3 flex items-center justify-between">
+                        <span class="font-bold text-lg tracking-wide">Project Mgmt</span>
+                        <div class="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
+                            <i class="fas fa-sitemap text-accent"></i>
+                        </div>
+                    </div>
+                    <ul class="space-y-3">
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-check text-secondary mr-3 text-xs group-hover:scale-125 transition-transform"></i>Strategic Planning</li>
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-check text-secondary mr-3 text-xs group-hover:scale-125 transition-transform"></i>SOP Development</li>
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-check text-secondary mr-3 text-xs group-hover:scale-125 transition-transform"></i>Cross-fn Leadership</li>
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-check text-secondary mr-3 text-xs group-hover:scale-125 transition-transform"></i>UI/UX Design</li>
+                    </ul>
+                </div>
+
+                <!-- Category 3 -->
+                <div class="bg-surface p-6 rounded-xl glow-border reveal delay-300 hover:shadow-[0_10px_30px_rgba(16,185,129,0.15)] transition-all duration-300">
+                    <div class="text-secondary mb-5 border-b border-surface2 pb-3 flex items-center justify-between">
+                        <span class="font-bold text-lg tracking-wide">Soft Skills</span>
+                        <div class="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center">
+                            <i class="fas fa-users text-secondary"></i>
+                        </div>
+                    </div>
+                    <ul class="space-y-3">
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-check text-primary mr-3 text-xs group-hover:scale-125 transition-transform"></i>Problem-Solving</li>
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-check text-primary mr-3 text-xs group-hover:scale-125 transition-transform"></i>Teamwork</li>
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-check text-primary mr-3 text-xs group-hover:scale-125 transition-transform"></i>Active Listening</li>
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-check text-primary mr-3 text-xs group-hover:scale-125 transition-transform"></i>Time Management</li>
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-check text-primary mr-3 text-xs group-hover:scale-125 transition-transform"></i>Adaptability</li>
+                    </ul>
+                </div>
+
+                <!-- Category 4 -->
+                <div class="bg-surface p-6 rounded-xl glow-border reveal delay-400 hover:shadow-[0_10px_30px_rgba(234,179,8,0.15)] transition-all duration-300">
+                    <div class="text-yellow-500 mb-5 border-b border-surface2 pb-3 flex items-center justify-between">
+                        <span class="font-bold text-lg tracking-wide">Work Attributes</span>
+                        <div class="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center">
+                            <i class="fas fa-cogs text-yellow-500"></i>
+                        </div>
+                    </div>
+                    <ul class="space-y-3">
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-bolt text-yellow-500/70 mr-3 text-xs group-hover:scale-125 transition-transform"></i>Works Under Pressure</li>
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-bolt text-yellow-500/70 mr-3 text-xs group-hover:scale-125 transition-transform"></i>Multitasking</li>
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-bolt text-yellow-500/70 mr-3 text-xs group-hover:scale-125 transition-transform"></i>Flexible/Overtime</li>
+                        <li class="text-slate-300 flex items-center group"><i class="fas fa-bolt text-yellow-500/70 mr-3 text-xs group-hover:scale-125 transition-transform"></i>Fast Learner</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="education" class="py-20 relative">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="mb-12 reveal">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">Education & <span class="text-primary">Background</span></h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary to-transparent"></div>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+                
+                <!-- Education Column -->
+                <div class="lg:w-5/12 reveal delay-100">
+                    <div class="bg-surface p-1 rounded-2xl bg-gradient-to-br from-primary/40 via-surface to-secondary/20 h-full shadow-xl">
+                        <div class="bg-dark p-8 rounded-xl h-full relative overflow-hidden flex flex-col justify-center">
+                            <!-- Circuit watermark -->
+                            <i class="fas fa-network-wired absolute -right-10 -bottom-10 text-9xl text-surface2 opacity-30 transform -rotate-12"></i>
+                            
+                            <div class="relative z-10 font-sans">
+                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                                    <i class="fas fa-graduation-cap text-2xl text-primary"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-white mb-2 leading-tight">Bachelor of Science in Computer Engineering</h3>
+                                <p class="text-secondary text-sm mb-6 font-medium">Major in System and Network Administration</p>
+                                
+                                <div class="border-l-2 border-surface2 pl-5 mt-6">
+                                    <p class="font-bold text-slate-200 text-lg">Pangasinan State University</p>
+                                    <p class="text-sm text-slate-400 mt-1">Urdaneta City Campus, Brgy. San Vicente</p>
+                                    <div class="inline-block mt-4 px-4 py-1.5 bg-surface2 rounded-full text-xs font-semibold text-slate-300 border border-slate-600">
+                                        <i class="far fa-calendar-alt mr-2 text-primary"></i> 2018 - 2023
+                                    </div>
+                                    <button class="mt-6 flex items-center text-sm font-semibold text-primary hover:text-white transition-colors cert-link cursor-pointer bg-primary/10 hover:bg-primary border border-primary/30 hover:border-primary rounded px-4 py-2 w-max" data-src="Diploma.png" data-title="Bachelor of Science in Computer Engineering">
+                                        <i class="fas fa-external-link-alt mr-2"></i> View Diploma
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certifications Column -->
+                <div class="lg:w-7/12 reveal delay-200">
+                    <div class="bg-surface p-8 rounded-2xl glow-border h-full font-sans shadow-xl">
+                        <div class="text-primary mb-8 text-lg font-bold tracking-wide border-b border-surface2 pb-3 flex items-center">
+                            <i class="fas fa-certificate mr-3"></i> Certifications & Seminars
+                            <span class="text-xs font-normal text-slate-500 ml-3 uppercase tracking-wider bg-surface2 px-2 py-1 rounded">Click to view</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <!-- Group 1 -->
+                            <div class="space-y-8">
+                                <div>
+                                    <h4 class="font-bold text-white text-sm bg-surface2 inline-block px-3 py-1.5 rounded-md mb-4 border border-slate-700 shadow-sm">ICpEP 7th Regional (2025)</h4>
+                                    <ul class="space-y-3 text-sm text-slate-400">
+                                        <li class="flex items-start group cursor-pointer cert-link" data-src="The AI.png" data-title="The AI Revolution in Education">
+                                            <i class="fas fa-search-plus text-primary text-xs mt-1 mr-3 opacity-50 group-hover:opacity-100 transition-opacity"></i> 
+                                            <span class="group-hover:text-primary transition-colors border-b border-transparent group-hover:border-primary/50">The AI Revolution in Education</span>
+                                        </li>
+                                        <li class="flex items-start group cursor-pointer cert-link" data-src="Engineering Smart.png" data-title="Engineering Smart Solutions">
+                                            <i class="fas fa-search-plus text-primary text-xs mt-1 mr-3 opacity-50 group-hover:opacity-100 transition-opacity"></i> 
+                                            <span class="group-hover:text-primary transition-colors border-b border-transparent group-hover:border-primary/50">Engineering Smart Solutions</span>
+                                        </li>
+                                        <li class="flex items-start group cursor-pointer cert-link" data-src="Safety.png" data-title="Safety Awareness 101">
+                                            <i class="fas fa-search-plus text-primary text-xs mt-1 mr-3 opacity-50 group-hover:opacity-100 transition-opacity"></i> 
+                                            <span class="group-hover:text-primary transition-colors border-b border-transparent group-hover:border-primary/50">Safety Awareness 101</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-bold text-white text-sm bg-surface2 inline-block px-3 py-1.5 rounded-md mb-4 border border-slate-700 shadow-sm">Conventions</h4>
+                                    <ul class="space-y-3 text-sm text-slate-400">
+                                        <li class="flex items-start group cursor-pointer cert-link" data-src="ICPEP 2018.png" data-title="3rd Regional Convention & General Assembly">
+                                            <i class="fas fa-search-plus text-primary text-xs mt-1 mr-3 opacity-50 group-hover:opacity-100 transition-opacity"></i> 
+                                            <span class="group-hover:text-primary transition-colors border-b border-transparent group-hover:border-primary/50">3rd Regional Convention & General Assembly (Oct 2018)</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <!-- Group 2 -->
+                            <div class="space-y-8">
+                                <div>
+                                    <h4 class="font-bold text-white text-sm bg-surface2 inline-block px-3 py-1.5 rounded-md mb-4 border border-slate-700 shadow-sm">Robotics & Automation (2023)</h4>
+                                    <ul class="space-y-3 text-sm text-slate-400">
+                                        <li class="flex items-start group cursor-pointer cert-link" data-src="Mechatronics.png" data-title="Introduction to Mechatronics">
+                                            <i class="fas fa-search-plus text-secondary text-xs mt-1 mr-3 opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all"></i> 
+                                            <span class="group-hover:text-primary transition-colors border-b border-transparent group-hover:border-primary/50">Introduction to Mechatronics</span>
+                                        </li>
+                                        <li class="flex items-start group cursor-pointer cert-link" data-src="Robotics and Animation.png" data-title="Robotics and Automation">
+                                            <i class="fas fa-search-plus text-secondary text-xs mt-1 mr-3 opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all"></i> 
+                                            <span class="group-hover:text-primary transition-colors border-b border-transparent group-hover:border-primary/50">Robotics and Automation</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div>
+                                    <h4 class="font-bold text-white text-sm bg-surface2 inline-block px-3 py-1.5 rounded-md mb-4 border border-slate-700 shadow-sm">Creative</h4>
+                                    <ul class="space-y-3 text-sm text-slate-400">
+                                        <li class="flex items-start group cursor-pointer cert-link" data-src="3D Animation.png" data-title="3D Animation Fundamentals">
+                                            <i class="fas fa-search-plus text-accent text-xs mt-1 mr-3 opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all"></i> 
+                                            <span class="group-hover:text-primary transition-colors border-b border-transparent group-hover:border-primary/50">3D Animation Fundamentals (May 2023)</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certificate Modal -->
+    <div id="cert-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center transition-opacity duration-300">
+        <div class="absolute inset-0 bg-dark/95 backdrop-blur-md modal-backdrop cursor-pointer"></div>
+        <div class="relative z-10 bg-surface border border-primary/40 p-2 sm:p-4 rounded-xl shadow-[0_0_50px_rgba(14,165,233,0.2)] max-w-5xl w-full mx-4 transform transition-all duration-400 scale-95 opacity-0 flex flex-col" id="cert-modal-content" style="max-height: 90vh;">
+            <div class="flex justify-between items-center mb-4 px-3 pt-2">
+                <h3 id="cert-modal-title" class="text-lg sm:text-xl font-bold text-white tracking-wide truncate pr-4 flex items-center">
+                    <i class="fas fa-award text-primary mr-3"></i> <span>Certificate</span>
+                </h3>
+                <button id="close-modal" class="text-slate-400 hover:text-white transition-colors focus:outline-none bg-surface2 hover:bg-red-500/20 rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0 group border border-transparent hover:border-red-500/50">
+                    <i class="fas fa-times text-lg group-hover:scale-110 transition-transform"></i>
+                </button>
+            </div>
+            <div class="relative w-full flex-1 bg-dark/80 flex items-center justify-center rounded-lg overflow-hidden border border-surface2 min-h-[50vh]">
+                <div id="cert-loader" class="absolute inset-0 flex items-center justify-center text-primary">
+                    <i class="fas fa-circle-notch fa-spin text-4xl shadow-[0_0_15px_#0ea5e9] rounded-full"></i>
+                </div>
+                <img id="cert-modal-img" src="" alt="Certificate" class="relative z-10 max-w-full max-h-[75vh] object-contain hidden shadow-2xl">
+            </div>
+        </div>
+    </div>
+
+    <footer id="contact" class="bg-dark text-slate-500 py-10 border-t border-primary/20 font-sans text-sm relative overflow-hidden">
+        <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-accent to-secondary opacity-70"></div>
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
+            
+            <div class="flex flex-col sm:flex-row gap-6 sm:gap-10 mb-8 mt-2">
+                <!-- Change YOUR_FACEBOOK_LINK_HERE to your actual facebook URL -->
+                <a href="https://www.facebook.com/JunlieghB.Permison" class="flex items-center text-slate-400 hover:text-primary transition-all duration-300 group hover:-translate-y-1" target="_blank">
+                    <div class="w-10 h-10 rounded-full bg-surface2 flex items-center justify-center mr-3 group-hover:bg-primary/20 transition-colors border border-transparent group-hover:border-primary/30">
+                        <i class="fab fa-facebook text-lg"></i>
+                    </div>
+                    <span class="font-medium">Junliegh Permison</span>
+                </a>
+                
+                <!-- Email link -->
+                <a href="mailto:permisonjunliegh12@gmail.com" class="flex items-center text-slate-400 hover:text-accent transition-all duration-300 group hover:-translate-y-1">
+                    <div class="w-10 h-10 rounded-full bg-surface2 flex items-center justify-center mr-3 group-hover:bg-accent/20 transition-colors border border-transparent group-hover:border-accent/30">
+                        <i class="fas fa-envelope text-lg"></i>
+                    </div>
+                    <span class="font-medium">permisonjunliegh12@gmail.com</span>
+                </a>
+                
+                <!-- Mobile number link -->
+                <a href="tel:+639912785470" class="flex items-center text-slate-400 hover:text-secondary transition-all duration-300 group hover:-translate-y-1">
+                    <div class="w-10 h-10 rounded-full bg-surface2 flex items-center justify-center mr-3 group-hover:bg-secondary/20 transition-colors border border-transparent group-hover:border-secondary/30">
+                        <i class="fas fa-mobile-alt text-lg"></i>
+                    </div>
+                    <span class="font-medium">+63 991 278 5470</span>
+                </a>
+            </div>
+            <p class="opacity-70">
+                &copy; <span id="year"></span> Junliegh B. Permison. All rights reserved. <span class="text-primary font-mono ml-2">System.exit(0);</span>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current year
+            document.getElementById('year').textContent = new Date().getFullYear();
+
+            // Typing Effect Logic for Hero Section
+            const textToType = "System initialized. Welcome.";
+            const typingElement = document.getElementById('typing-text');
+            let typingIndex = 0;
+            
+            function typeWriter() {
+                if (typingIndex < textToType.length) {
+                    typingElement.innerHTML += textToType.charAt(typingIndex);
+                    typingIndex++;
+                    setTimeout(typeWriter, 50); // Speed of typing
+                }
+            }
+            // Start typing effect slightly after page load
+            setTimeout(typeWriter, 500);
+
+            // Dynamic Mouse Spotlight Effect
+            const spotlight = document.getElementById('spotlight');
+            
+            // Only enable on non-touch devices
+            if (window.matchMedia("(pointer: fine)").matches) {
+                // Show spotlight with slight delay
+                setTimeout(() => { spotlight.classList.remove('opacity-0'); }, 1000);
+                
+                document.addEventListener('mousemove', (e) => {
+                    const x = e.clientX;
+                    const y = e.clientY;
+                    spotlight.style.background = `radial-gradient(600px circle at ${x}px ${y}px, rgba(14, 165, 233, 0.05), transparent 40%)`;
+                });
+            }
+
+            // Scroll Progress Bar Logic
+            const scrollProgress = document.getElementById('scroll-progress');
+            window.addEventListener('scroll', () => {
+                const totalScroll = document.documentElement.scrollTop;
+                const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrollValue = `${(totalScroll / windowHeight) * 100}%`;
+                scrollProgress.style.width = scrollValue;
+            });
+
+            // Intersection Observer for Smooth Reveal Animations
+            const revealElements = document.querySelectorAll('.reveal');
+            const revealOptions = {
+                threshold: 0.1, // Trigger when 10% of element is visible
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) {
+                        return;
+                    } else {
+                        entry.target.classList.add('active');
+                        // Optional: Stop observing once revealed
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, revealOptions);
+
+            revealElements.forEach(el => {
+                revealOnScroll.observe(el);
+            });
+
+            // Mobile Menu Toggle
+            const btn = document.getElementById('mobile-menu-button');
+            const menu = document.getElementById('mobile-menu');
+
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+
+            document.querySelectorAll('#mobile-menu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    menu.classList.add('hidden');
+                });
+            });
+
+            // Navbar styling on scroll
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 20) {
+                    navbar.classList.add('shadow-lg', 'border-primary/20', 'bg-dark/90');
+                    navbar.classList.remove('border-surface2', 'bg-dark/70');
+                } else {
+                    navbar.classList.remove('shadow-lg', 'border-primary/20', 'bg-dark/90');
+                    navbar.classList.add('border-surface2', 'bg-dark/70');
+                }
+            });
+
+            // Highlight active nav link on scroll
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 200)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+            window.dispatchEvent(new Event('scroll'));
+
+            // Certificate Modal Logic
+            const modal = document.getElementById('cert-modal');
+            const modalContent = document.getElementById('cert-modal-content');
+            const modalImg = document.getElementById('cert-modal-img');
+            const modalTitle = document.getElementById('cert-modal-title');
+            const loader = document.getElementById('cert-loader');
+            const closeModalBtn = document.getElementById('close-modal');
+            const backdrop = document.querySelector('.modal-backdrop');
+
+            const openModal = (src, title) => {
+                modal.classList.remove('hidden');
+                // Force reflow
+                void modal.offsetWidth;
+                
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+                
+                modalTitle.innerHTML = `<i class="fas fa-award text-primary mr-3"></i> <span>${title}</span>`;
+                modalImg.classList.add('hidden');
+                loader.classList.remove('hidden');
+                
+                modalImg.onload = () => {
+                    loader.classList.add('hidden');
+                    modalImg.classList.remove('hidden');
+                };
+                modalImg.src = src;
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            };
+
+            const closeModal = () => {
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
+                
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modalImg.src = '';
+                    document.body.style.overflow = ''; // Restore scrolling
+                }, 400);
+            };
+
+            // Attach click listeners to all certificate links
+            document.querySelectorAll('.cert-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const src = e.currentTarget.getAttribute('data-src');
+                    const title = e.currentTarget.getAttribute('data-title');
+                    if (src) openModal(src, title);
+                });
+            });
+
+            // Close listeners
+            closeModalBtn.addEventListener('click', closeModal);
+            backdrop.addEventListener('click', closeModal);
+            
+            // Escape key to close modal
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            });
+        });
+        
+        // Custom animation for scanning line
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes scan {
+                0% { top: -5%; opacity: 0; }
+                10% { opacity: 1; }
+                90% { opacity: 1; }
+                100% { top: 105%; opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
